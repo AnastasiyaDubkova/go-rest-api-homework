@@ -45,7 +45,8 @@ var tasks = map[string]Task{
 func getTasks(w http.ResponseWriter, r *http.Request) {
 	resp, err := json.Marshal(tasks)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
+		fmt.Printf("Ошибка сервера: %s", err.Error())
 		return
 	}
 
@@ -69,6 +70,10 @@ func postTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if _, ok := tasks[task.ID]; ok {
+		http.Error(w, "Задача уже существует", http.StatusBadRequest)
+		return
+	}
 	tasks[task.ID] = task
 
 	w.Header().Set("Content-Type", "application/json")
@@ -86,7 +91,8 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 
 	resp, err := json.Marshal(task)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Ошибка сервера", http.StatusInternalServerError)
+		fmt.Printf("Ошибка сервера: %s", err.Error())
 		return
 	}
 
